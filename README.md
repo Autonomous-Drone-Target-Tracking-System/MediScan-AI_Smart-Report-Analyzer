@@ -21,6 +21,7 @@
 
 ## 📖 Table of Contents
 
+- [⚡ How to Run](#-how-to-run)
 - [Overview](#-overview)
 - [Live Demo Flow](#-live-demo-flow)
 - [Features](#-features)
@@ -38,6 +39,84 @@
 - [Health Scoring](#-health-scoring)
 - [Known Issues & Limitations](#-known-issues--limitations)
 - [Roadmap](#-roadmap)
+
+---
+
+## ⚡ How to Run
+
+> **TL;DR** — Two terminals, four commands, and you're live.
+
+### Step 1 — Clone & configure secrets
+
+```bash
+git clone https://github.com/Autonomous-Drone-Target-Tracking-System/MediScan-AI_Smart-Report-Analyzer.git
+cd MediScan-AI_Smart-Report-Analyzer
+
+# Copy the env template and fill in your API keys
+copy .env.example .env
+```
+
+Open `.env` and set:
+```env
+GROQ_API_KEY=<your Groq key>        # https://console.groq.com/keys
+OCR_SPACE_API_KEY=<your OCR key>    # https://ocr.space/ocrapi  (free tier OK)
+FRONTEND_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+---
+
+### Step 2 — Start the Backend (Terminal 1)
+
+```bash
+cd backend
+
+# Create & activate virtual environment
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS / Linux
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the API server
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+✅ Backend ready at **http://localhost:8000** · Swagger docs at **http://localhost:8000/docs**
+
+---
+
+### Step 3 — Start the Frontend (Terminal 2)
+
+```bash
+cd frontend
+
+# Copy frontend env
+copy .env.local.example .env.local
+
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
+```
+
+✅ Frontend ready at **http://localhost:3000**
+
+---
+
+### Step 4 — Use the App
+
+```
+1. Open http://localhost:3000
+2. Click "Analyze My Report"
+3. Drag & drop a PDF or image of a blood/lab report
+4. Click "Analyze Report"
+5. Wait ~10–15 seconds → dashboard with your health score & AI insights
+```
+
+> 💡 **No Tesseract?** The app works fine without it — OCR.space handles scanned documents, and pdfplumber handles digital PDFs. Tesseract is only a local fallback.
 
 ---
 

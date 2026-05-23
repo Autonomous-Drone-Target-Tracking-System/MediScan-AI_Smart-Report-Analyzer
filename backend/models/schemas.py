@@ -9,6 +9,8 @@ class BiomarkerOut(BaseModel):
     unit: Optional[str] = None
     risk_category: str = "Normal"
     ai_explanation: Optional[str] = None
+    ref_low: Optional[float] = None
+    ref_high: Optional[float] = None
 
 
 class AnalysisResult(BaseModel):

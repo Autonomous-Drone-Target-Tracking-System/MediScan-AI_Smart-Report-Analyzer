@@ -23,6 +23,66 @@ interface Biomarker {
   unit: string;
   risk_category: string;
   ai_explanation: string;
+  ref_low?: number | null;
+  ref_high?: number | null;
+}
+
+// ── Fallback reference ranges (used when backend doesn't provide them) ─────
+const REFERENCE_RANGES: Record<string, { low: number | null; high: number | null; unit: string }> = {
+  "hemoglobin":        { low: 12.0, high: 17.5, unit: "g/dL" },
+  "ldl cholesterol":   { low: null, high: 130.0, unit: "mg/dL" },
+  "hdl cholesterol":   { low: 40.0, high: null,  unit: "mg/dL" },
+  "total cholesterol": { low: null, high: 200.0, unit: "mg/dL" },
+  "blood sugar (fasting)": { low: 70.0, high: 100.0, unit: "mg/dL" },
+  "hba1c (avg blood sugar)": { low: null, high: 5.7, unit: "%" },
+  "triglycerides":     { low: null, high: 150.0, unit: "mg/dL" },
+  "creatinine":        { low: 0.6, high: 1.2, unit: "mg/dL" },
+  "urea":              { low: 7.0, high: 20.0, unit: "mg/dL" },
+  "uric acid":         { low: 2.4, high: 7.0, unit: "mg/dL" },
+  "white blood cells (wbc)": { low: 4.0, high: 11.0, unit: "×10³/µL" },
+  "red blood cells (rbc)":   { low: 4.2, high: 5.9, unit: "×10⁶/µL" },
+  "platelet count":    { low: 150.0, high: 400.0, unit: "×10³/µL" },
+  "sodium":            { low: 136.0, high: 145.0, unit: "mEq/L" },
+  "potassium":         { low: 3.5, high: 5.1, unit: "mEq/L" },
+  "calcium":           { low: 8.6, high: 10.3, unit: "mg/dL" },
+  "tsh (thyroid)":     { low: 0.4, high: 4.0, unit: "µIU/mL" },
+  "vitamin d":         { low: 30.0, high: 100.0, unit: "ng/mL" },
+  "vitamin b12":       { low: 200.0, high: 900.0, unit: "pg/mL" },
+  "ferritin":          { low: 12.0, high: 300.0, unit: "ng/mL" },
+  "iron":              { low: 60.0, high: 170.0, unit: "µg/dL" },
+  "bilirubin":         { low: null, high: 1.2, unit: "mg/dL" },
+  "alt (liver enzyme)": { low: null, high: 40.0, unit: "U/L" },
+  "ast (liver enzyme)": { low: null, high: 40.0, unit: "U/L" },
+  "alkaline phosphatase": { low: null, high: 120.0, unit: "U/L" },
+};
+
+/** Get the ideal/reference range for a biomarker */
+function getIdealRange(b: Biomarker): { low: number | null; high: number | null; unit: string } | null {
+  // Prefer backend-provided values
+  if (b.ref_low != null || b.ref_high != null) {
+    return { low: b.ref_low ?? null, high: b.ref_high ?? null, unit: b.unit };
+  }
+  // Fallback: match by marker name
+  const key = b.marker_name.toLowerCase().trim();
+  for (const [rk, rv] of Object.entries(REFERENCE_RANGES)) {
+    if (key.includes(rk) || rk.includes(key)) return rv;
+  }
+  return null;
+}
+
+/** Format a reference range into a readable string like "12.0 – 17.5 g/dL" */
+function formatRange(range: { low: number | null; high: number | null; unit: string }): string {
+  const unit = range.unit;
+  if (range.low != null && range.high != null) {
+    return `${range.low} – ${range.high} ${unit}`;
+  }
+  if (range.low != null) {
+    return `≥ ${range.low} ${unit}`;
+  }
+  if (range.high != null) {
+    return `≤ ${range.high} ${unit}`;
+  }
+  return "—";
 }
 
 interface AnalysisResult {
@@ -33,7 +93,6 @@ interface AnalysisResult {
   recommendations: string[];
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
 function BiomarkerModal({ marker, onClose }: { marker: Biomarker | null; onClose: () => void }) {
   if (!marker) return null;
   const riskColor = marker.risk_category === "Critical" ? "var(--color-danger)"
@@ -43,25 +102,34 @@ function BiomarkerModal({ marker, onClose }: { marker: Biomarker | null; onClose
   return (
     <AnimatePresence>
       {marker && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={onClose}
-            style={{
-              position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
-              zIndex: 200, backdropFilter: "blur(4px)",
-            }}
-          />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.45)",
+            zIndex: 200,
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            onClick={(e) => e.stopPropagation()}
             style={{
-              position: "fixed", top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
-              background: "#fff", borderRadius: "var(--radius-xl)",
-              padding: "32px", width: "min(520px, 90vw)",
-              zIndex: 201, boxShadow: "0 24px 80px rgba(0,0,0,0.20)",
+              background: "#fff",
+              borderRadius: "var(--radius-xl)",
+              padding: "32px",
+              width: "min(520px, 90vw)",
+              boxShadow: "0 24px 80px rgba(0,0,0,0.20)",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
@@ -111,7 +179,7 @@ function BiomarkerModal({ marker, onClose }: { marker: Biomarker | null; onClose
               This is AI-generated guidance. Always consult your doctor for medical decisions.
             </p>
           </motion.div>
-        </>
+        </motion.div>
       )}
     </AnimatePresence>
   );
@@ -315,6 +383,7 @@ export default function DashboardPage() {
                 const riskBorder = b.risk_category === "Critical" ? "risk-border-critical"
                   : b.risk_category === "Moderate" ? "risk-border-moderate"
                   : "risk-border-normal";
+                const idealRange = getIdealRange(b);
                 return (
                   <motion.div
                     key={b.marker_id ?? i}
@@ -324,22 +393,70 @@ export default function DashboardPage() {
                     className={`card ${riskBorder}`}
                     style={{ cursor: "pointer", transition: "all 0.2s" }}
                   >
+                    {/* Header: Marker name + Status badge */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                       <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--color-text-primary)", flex: 1 }}>
                         {b.marker_name}
                       </div>
                       <StatusBadge risk={b.risk_category} size="sm" />
                     </div>
-                    <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "28px", color: "var(--color-text-primary)", marginBottom: 4 }}>
-                      {b.extracted_value ?? "—"}
-                      <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--color-text-muted)", marginLeft: 4 }}>
-                        {b.unit}
-                      </span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--color-text-muted)", fontSize: "12px" }}>
-                      <Info size={11} />
-                      View AI explanation
-                      <ChevronRight size={11} />
+
+                    {/* Body: Actual value (left) | Divider | Ideal Range (right) */}
+                    <div style={{ display: "flex", alignItems: "stretch", gap: 0 }}>
+                      {/* LEFT: Actual value + AI link */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "28px", color: "var(--color-text-primary)", marginBottom: 4, lineHeight: 1.2 }}>
+                          {b.extracted_value ?? "—"}
+                          <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--color-text-muted)", marginLeft: 4 }}>
+                            {b.unit}
+                          </span>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--color-text-muted)", fontSize: "12px" }}>
+                          <Info size={11} />
+                          View AI explanation
+                          <ChevronRight size={11} />
+                        </div>
+                      </div>
+
+                      {/* DIVIDER + RIGHT: Ideal Range */}
+                      {idealRange && (
+                        <>
+                          <div style={{
+                            width: 1,
+                            background: "linear-gradient(180deg, transparent 0%, var(--color-border) 20%, var(--color-border) 80%, transparent 100%)",
+                            margin: "0 16px",
+                            flexShrink: 0,
+                          }} />
+
+                          <div style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            minWidth: 110,
+                            maxWidth: 140,
+                            flexShrink: 0,
+                          }}>
+                            <div style={{
+                              fontSize: "10px",
+                              fontWeight: 700,
+                              color: "var(--color-text-muted)",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.8px",
+                              marginBottom: 6,
+                            }}>
+                              Ideal Range
+                            </div>
+                            <div style={{
+                              fontSize: "13px",
+                              fontWeight: 600,
+                              color: "#64748B",
+                              lineHeight: 1.4,
+                            }}>
+                              {formatRange(idealRange)}
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </motion.div>
                 );

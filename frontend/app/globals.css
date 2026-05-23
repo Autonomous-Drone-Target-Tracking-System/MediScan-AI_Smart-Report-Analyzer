@@ -1,0 +1,367 @@
+@import "tailwindcss";
+
+/* ── Google Fonts are loaded via next/font ── */
+
+/* ── CSS Design Tokens ─────────────────────────────────────────────────────── */
+:root {
+  /* Brand Colors */
+  --color-primary:     #2563EB;
+  --color-primary-light: #3B82F6;
+  --color-secondary:   #06B6D4;
+  --color-success:     #10B981; /* Vibrant and highly visible medical emerald green */
+  --color-warning:     #D97706; /* Rich warm amber-orange for high readability on light backgrounds */
+  --color-danger:      #EF4444; /* Crisp, high-contrast primary warning red */
+
+  /* Backgrounds */
+  --color-bg:          #F8FAFC;
+  --color-surface:     #FFFFFF;
+  --color-surface-2:   #F1F5F9;
+
+  /* Text */
+  --color-text-primary:   #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #64748B; /* High-contrast slate-500 (fully visible and WCAG AA compliant) */
+
+  /* Border */
+  --color-border:      #E2E8F0;
+  --color-border-focus:#2563EB;
+
+  /* Radius */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:  0 8px 32px rgba(37,99,235,0.08), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-glow-primary: 0 0 24px rgba(37,99,235,0.25);
+  --shadow-glow-danger:  0 0 20px rgba(239,68,68,0.20);
+  --shadow-glow-warning: 0 0 20px rgba(245,158,11,0.20);
+
+  /* Typography */
+  --font-heading: var(--font-poppins), 'Poppins', sans-serif;
+  --font-body:    var(--font-inter), 'Inter', sans-serif;
+
+  /* Spacing */
+  --spacing-section: 80px;
+}
+
+/* ── Base Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+}
+
+/* ── Utility Classes ────────────────────────────────────────────────────────── */
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient background */
+.gradient-bg {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Standard card */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  border: 1px solid var(--color-border);
+}
+
+/* Primary button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.30);
+  text-decoration: none;
+}
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--shadow-glow-primary);
+}
+.btn-primary:active { transform: translateY(0); }
+
+/* Secondary button */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+  border-radius: var(--radius-full);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.btn-secondary:hover {
+  background: #EFF6FF;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.12);
+}
+
+/* Risk badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.badge-normal   { background: #DCFCE7; color: #166534; }
+.badge-moderate { background: #FEF9C3; color: #713F12; }
+.badge-critical { background: #FEE2E2; color: #991B1B; }
+
+/* Risk card accents */
+.risk-border-normal   { border-left: 4px solid var(--color-success); }
+.risk-border-moderate { border-left: 4px solid var(--color-warning); box-shadow: var(--shadow-glow-warning); }
+.risk-border-critical { border-left: 4px solid var(--color-danger);  box-shadow: var(--shadow-glow-danger); }
+
+/* Section layout */
+.section {
+  padding: var(--spacing-section) 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Grid helpers */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .container { padding: 0 16px; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* Loading spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 24px; height: 24px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+.animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+
+/* ── Mobile Responsive Overrides ────────────────────────────────────────────── */
+/* These target inline-style grids/flexes in the dashboard and landing page     */
+
+/* Tablet: 768px */
+@media (max-width: 768px) {
+  /* Stats bar: 4-col → 2-col */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* How it works: 4-col → 2-col */
+  .how-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Dashboard summary header: flex row → column */
+  .summary-header-flex {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 24px !important;
+  }
+
+  /* Recommendations: 3-col → 1-col */
+  .recs-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Mobile: 640px */
+@media (max-width: 640px) {
+  /* Smaller section padding on mobile */
+  .section { padding: 48px 0; }
+
+  /* Hero section padding */
+  .hero-section { padding: 64px 0 72px !important; }
+
+  /* CTA banner padding */
+  .cta-banner { padding: 40px 24px !important; }
+
+  /* Dashboard header stats pills: wrap */
+  .stat-pills {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  /* Biomarker grid: always single col on small screens */
+  .grid-3 { grid-template-columns: 1fr !important; }
+
+  /* Recommendations always 1-col on small screens */
+  .recs-grid { grid-template-columns: 1fr !important; }
+}
+
+/* iPhone SE: 375px */
+@media (max-width: 390px) {
+  .container { padding: 0 12px; }
+  h1, .hero-h1 { font-size: 28px !important; }
+}
+
+/* ── Elite Healthcare Workstation Styles (Vercel & Apple Inspired) ─────────── */
+
+/* Floating ambient gradient backgrounds */
+.ambient-glow {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,0.06) 0%, rgba(6,182,212,0.02) 70%, transparent 100%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+  animation: pulseGlow 10s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+  100% { transform: scale(1.2) translate(30px, -20px); opacity: 1; }
+}
+
+/* Premium Medical Glassmorphic work surface */
+.glassmorphic-medical-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.03), 0 1px 3px rgba(15, 23, 42, 0.01);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glassmorphic-medical-panel:hover {
+  border-color: rgba(37, 99, 235, 0.25);
+  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.05), 0 1px 3px rgba(15, 23, 42, 0.01);
+}
+
+/* Elegant dark-mode radiology workspace */
+.radiology-dark-workspace {
+  background: #090D16;
+  border: 1px solid #1E293B;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+}
+
+/* Premium micro-interactive cards */
+.interactive-card {
+  will-change: transform, box-shadow, border-color;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 20px 40px rgba(6, 182, 212, 0.06), var(--shadow-sm);
+}
+
+/* Skeleton Shimmer Loading States */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Heartbeat pulse effect for emergencies */
+.emergency-pulse {
+  animation: heartPulse 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+@keyframes heartPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Dynamic glowing text */
+.glow-text-primary {
+  text-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
+}
+
+.glow-text-success {
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+
+.glow-text-danger {
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+}
+

@@ -1,0 +1,130 @@
+# ============================================================
+# MediScan AI — .gitignore
+# ============================================================
+
+# ------ Secrets & Environment Variables ------
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# ------ Python / Backend ------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+*.pyo
+*.pyc
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.env/
+backend/venv/
+backend/.venv/
+
+# ------ SQLite Database ------
+*.db
+*.sqlite
+*.sqlite3
+backend/medical.db
+
+# ------ Uploaded Files ------
+uploads/
+backend/uploads/
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.tiff
+*.bmp
+*.gif
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.svg
+!public/**/*.gif
+
+# ------ Next.js / Frontend ------
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+frontend/.npm
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+frontend/.DS_Store
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Standalone root node_modules (if any)
+node_modules/
+.npm
+.pnp
+.pnp.js
+
+# ------ Build Outputs ------
+.next/
+out/
+build/
+dist/
+
+# ------ Logs ------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ------ Testing ------
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.nox/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# ------ IDE & Editor ------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ------ OS Generated ------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V8
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ------ Miscellaneous ------
+*.tmp
+*.bak
+*.orig
+design_extracted.txt
+prd_extracted.txt
+techstack_extracted.txt

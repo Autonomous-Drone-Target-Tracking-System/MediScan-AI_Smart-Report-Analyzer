@@ -93,6 +93,20 @@ async def get_report(report_id: int):
 
 
 def _to_out(b: dict) -> dict:
+    # For biomarkers loaded from the DB, ref_low / ref_high may be missing.
+    # Fall back to the canonical REFERENCE_RANGES lookup in that case.
+    ref_low = b.get("ref_low")
+    ref_high = b.get("ref_high")
+
+    if ref_low is None and ref_high is None:
+        from services.medical_parser import REFERENCE_RANGES
+        key = b.get("marker_name", "").lower().strip()
+        for rk, rv in REFERENCE_RANGES.items():
+            if rk in key or key in rk:
+                ref_low = rv.get("low")
+                ref_high = rv.get("high")
+                break
+
     return {
         "marker_id": b.get("marker_id"),
         "marker_name": b.get("marker_name", ""),
@@ -100,4 +114,6 @@ def _to_out(b: dict) -> dict:
         "unit": b.get("unit", ""),
         "risk_category": b.get("risk_category", "Normal"),
         "ai_explanation": b.get("ai_explanation", ""),
+        "ref_low": ref_low,
+        "ref_high": ref_high,
     }

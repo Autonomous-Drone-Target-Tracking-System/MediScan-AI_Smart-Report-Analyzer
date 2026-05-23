@@ -59,65 +59,73 @@ function BiomarkerModal({ marker, onClose }: { marker: Biomarker | null; onClose
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
             style={{
-              position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)",
-              zIndex: 200, backdropFilter: "blur(4px)",
+              position: "fixed", inset: 0, background: "rgba(11, 15, 26, 0.75)",
+              zIndex: 200, backdropFilter: "blur(12px)",
             }}
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
             style={{
               position: "fixed", top: "50%", left: "50%",
               transform: "translate(-50%, -50%)",
-              background: "#fff", borderRadius: "var(--radius-xl)",
+              background: "rgba(30, 41, 59, 0.95)",
+              backdropFilter: "blur(24px)",
+              borderRadius: "var(--radius-xl)",
               padding: "32px", width: "min(520px, 90vw)",
-              zIndex: 201, boxShadow: "0 24px 80px rgba(0,0,0,0.20)",
+              zIndex: 201,
+              boxShadow: "0 24px 80px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(59, 130, 246, 0.05)",
+              border: "1px solid rgba(59, 130, 246, 0.25)",
+              color: "#ffffff"
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
               <div>
-                <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "22px", fontWeight: 800, marginBottom: 8 }}>
+                <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "22px", fontWeight: 800, marginBottom: 8, color: "#ffffff" }}>
                   {marker.marker_name}
                 </h3>
                 <StatusBadge risk={marker.risk_category} />
               </div>
               <button onClick={onClose} style={{
-                background: "var(--color-surface-2)", border: "none",
+                background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: "50%", width: 36, height: 36,
                 cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#c6c6cd"
               }}>✕</button>
             </div>
 
             <div style={{
-              background: "var(--color-surface-2)", borderRadius: "var(--radius-md)",
+              background: "rgba(15, 23, 42, 0.5)", borderRadius: "var(--radius-md)",
               padding: "16px 20px", marginBottom: 20,
+              border: "1px solid rgba(255, 255, 255, 0.05)",
               borderLeft: `4px solid ${riskColor}`,
             }}>
-              <div style={{ fontSize: "13px", color: "var(--color-text-muted)", marginBottom: 4 }}>Measured Value</div>
+              <div style={{ fontSize: "13px", color: "#94a3b8", marginBottom: 4 }}>Measured Value</div>
               <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "32px", color: riskColor }}>
                 {marker.extracted_value ?? "—"}
-                <span style={{ fontSize: "16px", fontWeight: 500, color: "var(--color-text-secondary)", marginLeft: 6 }}>
+                <span style={{ fontSize: "16px", fontWeight: 500, color: "#c6c6cd", marginLeft: 6 }}>
                   {marker.unit}
                 </span>
               </div>
             </div>
 
             <div style={{
-              background: "#EFF6FF", borderRadius: "var(--radius-md)",
+              background: "rgba(59, 130, 246, 0.08)", borderRadius: "var(--radius-md)",
               padding: "16px 20px", marginBottom: 20,
+              border: "1px solid rgba(59, 130, 246, 0.15)",
               borderLeft: "4px solid var(--color-secondary)",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                 <Brain size={16} color="var(--color-secondary)" />
                 <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-secondary)" }}>AI Explanation</span>
               </div>
-              <p style={{ fontSize: "14px", color: "var(--color-text-secondary)", lineHeight: 1.7, fontStyle: "italic" }}>
+              <p style={{ fontSize: "14px", color: "#e2e8f0", lineHeight: 1.7, fontStyle: "italic" }}>
                 {marker.ai_explanation || "No explanation available."}
               </p>
             </div>
 
-            <p style={{ fontSize: "12px", color: "var(--color-text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
+            <p style={{ fontSize: "12px", color: "#94a3b8", display: "flex", alignItems: "center", gap: 4 }}>
               <Info size={12} />
               This is AI-generated guidance. Always consult your doctor for medical decisions.
             </p>
@@ -182,6 +190,8 @@ const SECTION_VARIANTS: Variants = {
 const REC_ICONS = [<Salad size={22} />, <Dumbbell size={22} />, <HeartPulse size={22} />];
 const REC_COLORS = ["#10B981", "#2563EB", "#EF4444"];
 const REC_BGS = ["#ECFDF5", "#EFF6FF", "#FEF2F2"];
+const DARK_REC_BGS = ["rgba(16, 185, 129, 0.06)", "rgba(59, 130, 246, 0.06)", "rgba(239, 68, 68, 0.06)"];
+const DARK_REC_BORDERS = ["rgba(16, 185, 129, 0.25)", "rgba(59, 130, 246, 0.25)", "rgba(239, 68, 68, 0.25)"];
 
 export default function DashboardPage() {
   const params = useParams();
@@ -205,13 +215,13 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
+      <div style={{ minHeight: "100vh", background: "#0B0F10", color: "#ffffff" }}>
         <Navbar />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", gap: 16 }}>
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
-            <Loader2 size={48} color="var(--color-primary)" />
+            <Loader2 size={48} color="#3B82F6" />
           </motion.div>
-          <p style={{ color: "var(--color-text-secondary)" }}>Loading your health dashboard...</p>
+          <p style={{ color: "#94a3b8" }}>Loading your health dashboard...</p>
         </div>
       </div>
     );
@@ -219,13 +229,13 @@ export default function DashboardPage() {
 
   if (err || !data) {
     return (
-      <div style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
+      <div style={{ minHeight: "100vh", background: "#0B0F10", color: "#ffffff" }}>
         <Navbar />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", gap: 20 }}>
           <AlertCircle size={48} color="var(--color-danger)" />
-          <h2 style={{ fontFamily: "var(--font-heading)" }}>Report Not Found</h2>
-          <p style={{ color: "var(--color-text-secondary)" }}>{err}</p>
-          <button onClick={() => router.push("/upload")} className="btn-primary">
+          <h2 style={{ fontFamily: "var(--font-heading)", color: "#ffffff" }}>Report Not Found</h2>
+          <p style={{ color: "#94a3b8" }}>{err}</p>
+          <button onClick={() => router.push("/upload")} className="btn-primary" style={{ boxShadow: "0 4px 14px rgba(37,99,235,0.4)" }}>
             <Upload size={16} /> Try Again
           </button>
         </div>
@@ -239,7 +249,20 @@ export default function DashboardPage() {
   const abnormal = [...critical, ...moderate];
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
+    <div style={{
+      minHeight: "100vh",
+      background: "#0B0F10",
+      color: "#e0e3e5",
+      fontFamily: "var(--font-heading)",
+      // Local variables override to adapt elements globally
+      "--color-bg": "#0B0F10",
+      "--color-surface": "rgba(30, 41, 59, 0.6)",
+      "--color-surface-2": "rgba(15, 23, 42, 0.8)",
+      "--color-text-primary": "#ffffff",
+      "--color-text-secondary": "#c6c6cd",
+      "--color-text-muted": "#94a3b8",
+      "--color-border": "rgba(59, 130, 246, 0.12)",
+    } as React.CSSProperties}>
       <Navbar />
       <BiomarkerModal marker={selectedMarker} onClose={() => setSelectedMarker(null)} />
 
@@ -248,14 +271,18 @@ export default function DashboardPage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
           <button
             onClick={() => router.push("/upload")}
-            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "var(--color-text-secondary)", fontSize: "14px" }}
+            style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: "#94a3b8", fontSize: "14px" }}
           >
             <ArrowLeft size={16} /> Upload Another Report
           </button>
           <button
             onClick={() => window.print()}
             className="btn-secondary"
-            style={{ padding: "10px 20px", fontSize: "13px" }}
+            style={{
+              padding: "10px 20px", fontSize: "13px",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+              color: "#ffffff"
+            }}
           >
             <Printer size={15} /> Download Summary
           </button>
@@ -265,23 +292,31 @@ export default function DashboardPage() {
         <motion.div
           variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={0}
           style={{
-            background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)",
+            background: "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)",
             borderRadius: "var(--radius-xl)", padding: "36px 40px",
-            marginBottom: 28, color: "#fff",
+            marginBottom: 28, color: "#ffffff",
             display: "flex", alignItems: "center", gap: 40, flexWrap: "wrap",
-            boxShadow: "0 8px 32px rgba(37,99,235,0.30)",
+            boxShadow: "0 20px 50px rgba(59, 130, 246, 0.15)",
+            border: "1px solid rgba(59, 130, 246, 0.25)",
           }}
         >
           <div style={{ flex: 1, minWidth: 200 }}>
             <div style={{ fontSize: "13px", opacity: 0.8, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-              <Activity size={13} /> Report #{data.report_id} Analysis
+              <Activity size={13} color="var(--color-secondary)" /> Report #{data.report_id} Analysis
             </div>
             <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 800, marginBottom: 16 }}>
-              Health Analysis Dashboard
+              Patient Health Dashboard
             </h1>
+            <div style={{ fontSize: "14px", color: "#c6c6cd", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}>
+              <span>Analysis for <strong style={{ color: "#3B82F6" }}>{data.patient_info?.name || "Patient"}</strong></span>
+              <span>•</span>
+              <span>Age: <strong>{data.patient_info?.age || "—"}</strong></span>
+              <span>•</span>
+              <span>Gender: <strong>{data.patient_info?.gender || "—"}</strong></span>
+            </div>
             <div className="stat-pills" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
               {/* Total Markers */}
-              <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
+              <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
                 <div style={{ fontSize: "11px", opacity: 0.85, fontWeight: 600 }}>Total Markers</div>
                 <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "22px", marginTop: 2 }}>
                   {data.biomarkers.length}
@@ -289,7 +324,7 @@ export default function DashboardPage() {
               </div>
               
               {/* Critical */}
-              <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
+              <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
                 <div style={{ fontSize: "11px", opacity: 0.85, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--color-danger)", display: "inline-block", boxShadow: "0 0 8px var(--color-danger)" }} />
                   Critical
@@ -300,7 +335,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Moderate */}
-              <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
+              <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
                 <div style={{ fontSize: "11px", opacity: 0.85, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--color-warning)", display: "inline-block", boxShadow: "0 0 8px var(--color-warning)" }} />
                   Moderate
@@ -311,7 +346,7 @@ export default function DashboardPage() {
               </div>
 
               {/* Normal */}
-              <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
+              <div style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "var(--radius-md)", padding: "10px 16px", minWidth: 100 }}>
                 <div style={{ fontSize: "11px", opacity: 0.85, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--color-success)", display: "inline-block", boxShadow: "0 0 8px var(--color-success)" }} />
                   Normal
@@ -325,44 +360,54 @@ export default function DashboardPage() {
           <HealthGauge score={data.health_score} />
         </motion.div>
 
-        {/* ── Section 2: Critical Findings ─── */}
+        {/* ── Section 2: Biomarker Results ─── */}
         {data.biomarkers.length > 0 && (
           <motion.div variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={1} style={{ marginBottom: 28 }}>
-            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "20px", fontWeight: 700, marginBottom: 16 }}>
-              🔬 Biomarker Results
-              <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-text-muted)", marginLeft: 10 }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "20px", fontWeight: 700, marginBottom: 16, color: "#ffffff", display: "flex", alignItems: "center", gap: 8 }}>
+              🔬 Critical Biomarkers
+              <span style={{ fontSize: "13px", fontWeight: 500, color: "#94a3b8", marginLeft: 10 }}>
                 Click any card for AI explanation
               </span>
             </h2>
             <div className="grid-3">
               {[...critical, ...moderate, ...normal].map((b, i) => {
-                const riskBorder = b.risk_category === "Critical" ? "risk-border-critical"
-                  : b.risk_category === "Moderate" ? "risk-border-moderate"
-                  : "risk-border-normal";
+                const riskBorderColor = b.risk_category === "Critical" ? "var(--color-danger)"
+                  : b.risk_category === "Moderate" ? "var(--color-warning)"
+                  : "var(--color-success)";
                 return (
                   <motion.div
                     key={b.marker_id ?? i}
                     variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={i * 0.5}
-                    whileHover={{ y: -4, transition: { duration: 0.15 } }}
+                    whileHover={{ y: -4, borderColor: "rgba(59, 130, 246, 0.4)", boxShadow: "0 10px 30px rgba(59, 130, 246, 0.08), inset 0 0 20px rgba(59, 130, 246, 0.1)" }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedMarker(b)}
-                    className={`card ${riskBorder}`}
-                    style={{ cursor: "pointer", transition: "all 0.2s" }}
+                    style={{
+                      cursor: "pointer",
+                      background: "rgba(30, 41, 59, 0.6)",
+                      backdropFilter: "blur(16px)",
+                      border: "1px solid rgba(59, 130, 246, 0.15)",
+                      borderLeft: `4px solid ${riskBorderColor}`,
+                      borderRadius: "var(--radius-xl)",
+                      padding: "24px",
+                      boxShadow: "inset 0 0 20px rgba(59, 130, 246, 0.05), 0 8px 32px rgba(0, 0, 0, 0.15)",
+                      transition: "all 0.2s",
+                    }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                      <div style={{ fontSize: "14px", fontWeight: 700, color: "var(--color-text-primary)", flex: 1 }}>
+                      <div style={{ fontSize: "14px", fontWeight: 700, color: "#ffffff", flex: 1 }}>
                         {b.marker_name}
                       </div>
                       <StatusBadge risk={b.risk_category} size="sm" />
                     </div>
-                    <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "28px", color: "var(--color-text-primary)", marginBottom: 4 }}>
+                    <div style={{ fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: "28px", color: "#ffffff", marginBottom: 4 }}>
                       {b.extracted_value ?? "—"}
-                      <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--color-text-muted)", marginLeft: 4 }}>
+                      <span style={{ fontSize: "14px", fontWeight: 500, color: "#94a3b8", marginLeft: 4 }}>
                         {b.unit}
                       </span>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--color-text-muted)", fontSize: "12px" }}>
-                      <Info size={11} />
-                      View AI explanation
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#94a3b8", fontSize: "12px", marginTop: 12 }}>
+                      <Info size={11} color="var(--color-secondary)" />
+                      <span style={{ fontWeight: 500 }}>View AI explanation</span>
                       <ChevronRight size={11} />
                     </div>
                   </motion.div>
@@ -374,11 +419,11 @@ export default function DashboardPage() {
 
         {data.biomarkers.length === 0 && (
           <motion.div variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={1}
-            style={{ textAlign: "center", padding: "48px", background: "#FFFBEB", borderRadius: "var(--radius-xl)", marginBottom: 28, border: "1px solid #FDE68A" }}
+            style={{ textAlign: "center", padding: "48px", background: "rgba(245, 158, 11, 0.08)", border: "1px solid rgba(245, 158, 11, 0.3)", borderRadius: "var(--radius-xl)", marginBottom: 28 }}
           >
             <AlertCircle size={40} color="var(--color-warning)" style={{ marginBottom: 12 }} />
-            <h3 style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}>No biomarkers detected</h3>
-            <p style={{ color: "var(--color-text-secondary)", marginTop: 8 }}>
+            <h3 style={{ fontFamily: "var(--font-heading)", fontWeight: 700, color: "#ffffff" }}>No biomarkers detected</h3>
+            <p style={{ color: "#94a3b8", marginTop: 8 }}>
               The OCR couldn't extract recognizable medical values. Try uploading a clearer image or text-based PDF.
             </p>
           </motion.div>
@@ -387,21 +432,25 @@ export default function DashboardPage() {
         {/* ── Section 3: AI Explanation Panel ─── */}
         <motion.div variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={2} style={{ marginBottom: 28 }}>
           <div style={{
-            background: "var(--color-surface)", borderRadius: "var(--radius-xl)",
-            border: "1px solid var(--color-border)", boxShadow: "var(--shadow-md)",
-            borderLeft: "4px solid var(--color-secondary)", overflow: "hidden",
+            background: "rgba(30, 41, 59, 0.65)",
+            backdropFilter: "blur(16px)",
+            borderRadius: "var(--radius-xl)",
+            border: "1px solid rgba(6, 182, 212, 0.25)",
+            borderLeft: "4px solid var(--color-secondary)",
+            boxShadow: "0 15px 40px rgba(6, 182, 212, 0.08)",
+            overflow: "hidden",
           }}>
-            <div style={{ padding: "24px 28px", borderBottom: "1px solid var(--color-border)", background: "#F0FDFE" }}>
+            <div style={{ padding: "20px 28px", borderBottom: "1px solid rgba(6, 182, 212, 0.15)", background: "rgba(6, 182, 212, 0.08)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <Brain size={20} color="var(--color-secondary)" />
-                <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "16px", color: "#0E7490" }}>
+                <span style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "16px", color: "var(--color-secondary)" }}>
                   AI Health Summary
                 </span>
               </div>
             </div>
             <div style={{ padding: "24px 28px" }}>
               <p style={{
-                fontSize: "16px", lineHeight: 1.8, color: "var(--color-text-secondary)",
+                fontSize: "16px", lineHeight: 1.8, color: "#f1f5f9",
                 fontStyle: "italic",
               }}>
                 "{data.ai_summary}"
@@ -412,7 +461,7 @@ export default function DashboardPage() {
 
         {/* ── Section 4: Recommendations ─── */}
         <motion.div variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={3}>
-          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "20px", fontWeight: 700, marginBottom: 16 }}>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "20px", fontWeight: 700, marginBottom: 16, color: "#ffffff" }}>
             💡 Personalized Recommendations
           </h2>
           <div className="recs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
@@ -420,12 +469,12 @@ export default function DashboardPage() {
               <motion.div
                 key={i}
                 variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={i * 0.5}
-                whileHover={{ y: -4, transition: { duration: 0.15 } }}
+                whileHover={{ y: -4, boxShadow: "0 10px 30px rgba(59, 130, 246, 0.05)" }}
                 style={{
-                  background: REC_BGS[i % 3],
+                  background: DARK_REC_BGS[i % 3],
                   borderRadius: "var(--radius-lg)",
                   padding: "24px",
-                  border: `1px solid ${REC_COLORS[i % 3]}20`,
+                  border: `1px solid ${DARK_REC_BORDERS[i % 3]}`,
                 }}
               >
                 <div style={{
@@ -437,7 +486,7 @@ export default function DashboardPage() {
                 }}>
                   {REC_ICONS[i % 3]}
                 </div>
-                <p style={{ fontSize: "14px", lineHeight: 1.7, color: "var(--color-text-secondary)" }}>
+                <p style={{ fontSize: "14px", lineHeight: 1.7, color: "#e2e8f0" }}>
                   {rec}
                 </p>
               </motion.div>
@@ -447,11 +496,18 @@ export default function DashboardPage() {
 
         {/* Disclaimer */}
         <motion.div variants={SECTION_VARIANTS} initial="hidden" animate="visible" custom={4}
-          style={{ marginTop: 40, padding: "16px 20px", background: "#FFF7ED", borderRadius: "var(--radius-md)", border: "1px solid #FED7AA", fontSize: "13px", color: "#9A3412", display: "flex", alignItems: "flex-start", gap: 8 }}
+          style={{
+            marginTop: 40, padding: "16px 20px",
+            background: "rgba(245, 158, 11, 0.08)",
+            borderRadius: "var(--radius-md)",
+            border: "1px solid rgba(245, 158, 11, 0.3)",
+            fontSize: "13px", color: "#fdbb74",
+            display: "flex", alignItems: "flex-start", gap: 8
+          }}
         >
-          <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 1 }} />
+          <AlertCircle size={16} color="#f59e0b" style={{ flexShrink: 0, marginTop: 1 }} />
           <span>
-            <strong>Medical Disclaimer:</strong> This analysis is AI-generated for informational purposes only.
+            <strong style={{ color: "#ffffff" }}>Medical Disclaimer:</strong> This analysis is AI-generated for informational purposes only.
             It is not a medical diagnosis. Always consult a qualified healthcare professional for medical advice.
           </span>
         </motion.div>
@@ -472,6 +528,29 @@ export default function DashboardPage() {
         />
 
         <style>{`
+          /* Local dark mode overrides for Navbar when on this page */
+          nav {
+            background: rgba(11, 15, 26, 0.85) !important;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.15) !important;
+          }
+          nav div, nav span, nav a {
+            color: #ffffff !important;
+          }
+          nav a:hover {
+            color: #3b82f6 !important;
+            background: rgba(59, 130, 246, 0.12) !important;
+          }
+          nav button {
+            background: rgba(255, 255, 255, 0.06) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: #c6c6cd !important;
+          }
+          nav button:hover {
+            background: rgba(239, 68, 68, 0.12) !important;
+            color: #ef4444 !important;
+            border-color: rgba(239, 68, 68, 0.2) !important;
+          }
+
           @media(max-width:640px) {
             div[style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
           }

@@ -117,7 +117,7 @@ export default function LandingPage() {
               fontSize: "13px", fontWeight: 600, marginBottom: 24,
             }}>
               <Zap size={13} fill="currentColor" />
-              AI-Powered · Hackathon MVP 2026
+              AI-Powered · Smart Medical Report Analyzer 
             </span>
           </motion.div>
 
@@ -148,7 +148,7 @@ export default function LandingPage() {
             }}
           >
             Upload your blood test or health report and get AI-powered insights in seconds.
-            No medical degree required — just clarity.
+            No medical degree required, just clarity.
           </motion.p>
 
           <motion.div
@@ -237,7 +237,7 @@ export default function LandingPage() {
               <span className="gradient-text">Understand Your Health</span>
             </h2>
             <p style={{ color: "var(--color-text-secondary)", fontSize: "17px", maxWidth: 560, margin: "0 auto" }}>
-              From raw medical PDF to clear health dashboard — all powered by AI, no expertise needed.
+              From raw medical PDF to clear health dashboard, all powered by AI, no expertise needed.
             </p>
           </motion.div>
 
@@ -363,7 +363,7 @@ export default function LandingPage() {
               Ready to Understand Your Health?
             </h2>
             <p style={{ color: "rgba(255,255,255,0.85)", fontSize: "18px", marginBottom: 36, position: "relative" }}>
-              Upload your medical report now — free, instant, and no sign-up required.
+              Upload your medical report now free, instant, and no sign-up required.
             </p>
             <Link
               href="/upload"
@@ -398,7 +398,7 @@ export default function LandingPage() {
             <Activity size={18} color="#2563EB" />
             <span style={{ fontFamily: "var(--font-heading)", color: "#fff", fontWeight: 700 }}>MediScan AI</span>
           </div>
-          <p>Smart Medical Report Analyzer — Hackathon MVP 2026</p>
+          <p>Smart Medical Report Analyzer — HackXcelerate 2K26</p>
           <p style={{ marginTop: 4 }}>
             ⚠️ For demonstration purposes only. Not a substitute for professional medical advice.
           </p>

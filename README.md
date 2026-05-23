@@ -119,7 +119,7 @@ npm run dev
 > 💡 **No Tesseract?** The app works fine without it — OCR.space handles scanned documents, and pdfplumber handles digital PDFs. Tesseract is only a local fallback.
 
 ---
-  
+    
 ## 🌟 Overview
 
 **MediScan AI** is a full-stack web application built for a hackathon that transforms raw medical lab reports (PDFs or images) into clear, actionable health insights — powered by OCR and large language models.

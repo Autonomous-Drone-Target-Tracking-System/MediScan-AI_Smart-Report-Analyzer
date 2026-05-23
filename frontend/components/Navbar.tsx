@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Activity, Upload, History, Menu, X, TrendingUp, LogOut, ShieldCheck } from "lucide-react";
+import { Activity, Upload, History, Menu, X, TrendingUp, LogOut, ShieldCheck, Mic, Building2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { clearSession, getUserSession, isAuthenticated } from "@/utils/auth";
@@ -36,7 +36,8 @@ export default function Navbar() {
   const links = [
     { href: "/upload", label: "Upload Report", icon: <Upload size={16} /> },
     { href: "/history", label: "History", icon: <History size={16} /> },
-    { href: "/analytics", label: "Trends", icon: <TrendingUp size={16} /> },
+    { href: "/assistant", label: "Sofia Voice AI", icon: <Mic size={16} /> },
+    { href: "/enterprise", label: "Sofia Enterprise", icon: <Building2 size={16} /> },
   ];
 
   return (

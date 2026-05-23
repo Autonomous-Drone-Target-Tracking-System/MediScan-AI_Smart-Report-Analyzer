@@ -49,6 +49,10 @@ class AnalysisResult(BaseModel):
     recommendations:        List[str]
     patient_info:           PatientInfoOut          = PatientInfoOut()
     extraction_confidence:  Optional[ExtractionConfidenceOut] = None
+    is_radiology:           bool                    = False
+    is_cardiac:             bool                    = False
+    is_dicom:               bool                    = False
+    report_type:            Optional[str]           = None
 
 
 class UploadResponse(BaseModel):

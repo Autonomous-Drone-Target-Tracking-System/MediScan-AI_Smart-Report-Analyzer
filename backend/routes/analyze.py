@@ -14,7 +14,7 @@ from __future__ import annotations
 import os
 import json
 import logging
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from db.database import get_connection
 
 from db.crud import get_report_by_id, get_biomarkers_by_report_id
@@ -119,6 +119,7 @@ async def list_reports(current_user: dict = Depends(require_hipaa_consent)):
 @router.post("/analyze/{report_id}", response_model=AnalysisResult)
 async def analyze_report(
     report_id: int,
+    request: Request,
     current_user: dict = Depends(require_hipaa_consent)
 ):
     """
@@ -165,6 +166,71 @@ async def analyze_report(
             f.write(decrypted_data)
         
         logger.info("[Analyze SEC] Commencing secure OCR sandbox for report %d", report_id)
+        from services.ocr_router import extract_text
+        raw_text = extract_text(temp_file_path)
+        
+        # ── Automated Document Type Classification & Routing (Fail-proof upgrade) ──
+        text_lower = raw_text.lower()
+        report_type = "biomarker"
+        
+        # 1. DICOM Check
+        if filename.endswith(".dcm") or "dicom" in text_lower:
+            report_type = "dicom"
+        else:
+            # 2. Cardiac Check
+            cardiac_keywords = ["ecg", "ekg", "electrocardiogram", "heart rate", "sinus rhythm", "st elevation", "t-wave", "arrhythmia", "atrial fibrillation", "cardiac"]
+            cardiac_matches = sum(1 for kw in cardiac_keywords if kw in text_lower)
+            if cardiac_matches >= 3 or (("ecg" in text_lower or "ekg" in text_lower) and cardiac_matches >= 1):
+                report_type = "cardiac"
+            else:
+                # 3. Radiology Check
+                radiology_keywords = ["radiology", "chest x-ray", "x-ray", "ct scan", "mri", "ultrasound", "opacity", "consolidation", "pleural effusion", "atelectasis", "computed tomography"]
+                radiology_matches = sum(1 for kw in radiology_keywords if kw in text_lower)
+                if radiology_matches >= 3 or ("x-ray" in text_lower or "ct scan" in text_lower or "mri" in text_lower):
+                    if "cholesterol" not in text_lower and "hemoglobin" not in text_lower:
+                        report_type = "radiology"
+        
+        logger.info("[Analyze SEC] Document classification result: %s", report_type)
+        
+        if report_type == "radiology":
+            from routes.radiology import analyze_radiology_report
+            rad_res = await analyze_radiology_report(report_id, request, current_user)
+            return AnalysisResult(
+                report_id=report_id,
+                health_score=rad_res.overall_health_score,
+                biomarkers=[],
+                ai_summary=rad_res.clinical_impression,
+                recommendations=rad_res.recommendations,
+                is_radiology=True,
+                report_type=rad_res.report_type
+            )
+            
+        elif report_type == "cardiac":
+            from routes.cardiac import analyze_cardiac_report
+            cardiac_res = await analyze_cardiac_report(report_id, request, current_user)
+            return AnalysisResult(
+                report_id=report_id,
+                health_score=cardiac_res.overall_health_score,
+                biomarkers=[],
+                ai_summary=cardiac_res.clinical_impression,
+                recommendations=cardiac_res.recommendations,
+                is_cardiac=True,
+                report_type=cardiac_res.report_type
+            )
+            
+        elif report_type == "dicom":
+            from routes.dicom import analyze_dicom_report
+            dicom_res = await analyze_dicom_report(report_id, request, current_user)
+            return AnalysisResult(
+                report_id=report_id,
+                health_score=dicom_res.overall_health_score,
+                biomarkers=[],
+                ai_summary=dicom_res.clinical_impression,
+                recommendations=dicom_res.recommendations,
+                is_dicom=True,
+                report_type=dicom_res.report_type
+            )
+            
         result = run_analysis(temp_file_path, report_id)
     except Exception as e:
         logger.error("[Analyze SEC] Sandbox processing error: %s", e)

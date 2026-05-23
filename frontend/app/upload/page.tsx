@@ -92,6 +92,15 @@ export default function UploadPage() {
           msg = msg.message ?? JSON.stringify(msg);
         }
       }
+      if (typeof msg === "string" && (msg.toLowerCase().includes("expired") || err?.response?.status === 401)) {
+        msg = "Your secure clinical session has expired. Redirecting to login to re-authenticate...";
+        import("@/utils/auth").then(({ clearSession }) => {
+          clearSession();
+          setTimeout(() => {
+            router.push("/login?expired=true");
+          }, 1800);
+        });
+      }
       setError(msg);
     }
   };

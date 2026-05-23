@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import {
   Activity, AlertCircle, Brain, Salad, Dumbbell, HeartPulse,
-  ChevronRight, Printer, Upload, ArrowLeft, Loader2, Info
+  ChevronRight, Printer, Upload, ArrowLeft, Loader2, Info, MapPin
 } from "lucide-react";
 import axios from "axios";
 import Navbar from "@/components/Navbar";

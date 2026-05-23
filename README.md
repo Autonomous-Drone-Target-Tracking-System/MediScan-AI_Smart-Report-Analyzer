@@ -1,579 +1,101 @@
-<div align="center">
+# MediScan AI: Next-Gen Enterprise Healthcare Platform
 
-# 🩺 MediScan AI
-### Smart Medical Report Analyzer
+MediScan AI is a comprehensive, AI-powered healthcare ecosystem designed to seamlessly bridge the gap between patient diagnostics and enterprise clinic operations. Originally built as an intelligent medical report analyzer, MediScan has evolved into a fully scalable B2B healthcare product featuring **Sofia Voice AI** and the **Sofia Enterprise Module**.
 
-**Upload any blood test or lab report → Get AI-powered health insights in seconds.**
+##  Key Features & Architecture
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.136-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-16.2-000000?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org/)
-[![Groq](https://img.shields.io/badge/Groq-LLM-F55036?style=flat-square)](https://groq.com/)
-[![OCR.space](https://img.shields.io/badge/OCR.space-API-blueviolet?style=flat-square)](https://ocr.space/)
-[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://sqlite.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+### 1. Smart Medical Report Analyzer
+- **Biomarker Extraction Engine**: Automatically extracts critical biomarkers from uploaded PDF reports (e.g., lipid panels, liver function, CBC) and maps them to standard clinical reference ranges.
+- **Risk Categorization**: Flags abnormalities with severity levels (`Normal`, `Moderate`, `Critical`) and provides plain-English AI explanations for patients.
+- **Specialized Workflows**:
+  - **Radiology**: Analyzes structured radiology findings and outputs anatomical abnormalities.
+  - **Cardiac / ECG**: Parses cardiac parameters (Heart Rate, QTc) and immediately flags `Emergency` conditions.
+  - **DICOM Integration**: Backend support for ingesting structured medical imaging metadata.
 
-> ⚠️ **Demo purposes only.** Not a substitute for professional medical advice.
+### 2. Sofia Voice AI Platform
+An immersive, real-time conversational healthcare assistant designed for ultra-low latency, empathetic voice interactions.
+- **Real-Time WebSockets**: Streams audio and token data bidirectionally without waiting for full generation.
+- **Human-Like Interruption Handling**: If the AI is speaking and the patient begins to talk, the system instantly cancels the TTS buffer and flushes the queue, creating natural turn-taking dynamics.
+- **Web Speech API Integration**: Leverages native browser APIs for high-performance Speech-to-Text and Text-to-Speech simulation.
+- **Contextual Healthcare Reasoning**: Built to guide patients through their reports, explain complex medical terms, and assist in appointment booking.
 
-</div>
+### 3. Geospatial Healthcare Discovery (Find Care)
+- **Interactive Provider Map**: A beautiful, framer-motion powered simulated map experience mapping recommended doctors, clinics, and emergency rooms near the patient.
+- **Emergency Escalation UI**: If a patient's report is flagged as `CRITICAL`, the system bypasses standard booking UI to display flashing red "Call ER Now" and "Get Directions" alerts.
+- **Semantic Filtering**: Allows users to filter providers by AI-inferred specialties based on their specific health report findings.
 
----
+### 4. Sofia Enterprise Module (B2B Clinic Operations)
+Transforming MediScan into a scalable product that healthcare enterprises can deploy across networks.
+- **Multi-Modality Scheduling**: Intelligent booking workflows that adapt to CT, MRI, Ultrasound, and X-ray needs.
+- **AI Safety Checks**: A safeguard engine that checks the patient's profile *before* booking (e.g., blocking an MRI if the patient has a metal implant, or a CT if they have an iodine allergy).
+- **RIS Reservation Integration**: Seamlessly syncs with external Radiology Information Systems (RIS) to reserve slots automatically.
+- **Automated Prep Guidelines & SMS**: Generates scan-specific preparation instructions (e.g., "fast for 4 hours") and triggers SMS dispatches.
+- **Bulk Billing Engine**: Streamlines clinic operations by grouping unbilled appointments into a single, scalable financial transaction.
+- **Multi-Center Deployments**: Dashboards designed to handle multi-clinic rosters.
 
-## 📖 Table of Contents
-
-- [⚡ How to Run](#-how-to-run)
-- [Overview](#-overview)
-- [Live Demo Flow](#-live-demo-flow)
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
-  - [Environment Variables](#environment-variables)
-- [API Reference](#-api-reference)
-- [Analysis Pipeline](#-analysis-pipeline)
-- [Database Schema](#-database-schema)
-- [Health Scoring](#-health-scoring)
-- [Known Issues & Limitations](#-known-issues--limitations)
-- [Roadmap](#-roadmap)
-
----
-
-## ⚡ How to Run
-
-> **TL;DR** — Two terminals, four commands, and you're live.
-
-### Step 1 — Clone & configure secrets
-
-```bash
-git clone https://github.com/Autonomous-Drone-Target-Tracking-System/MediScan-AI_Smart-Report-Analyzer.git
-cd MediScan-AI_Smart-Report-Analyzer
-
-# Copy the env template and fill in your API keys
-copy .env.example .env
-```
-
-Open `.env` and set:
-```env
-GROQ_API_KEY=<your Groq key>        # https://console.groq.com/keys
-OCR_SPACE_API_KEY=<your OCR key>    # https://ocr.space/ocrapi  (free tier OK)
-FRONTEND_URL=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
-
----
-
-### Step 2 — Start the Backend (Terminal 1)
-
-```bash
-cd backend
-
-# Create & activate virtual environment
-python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # macOS / Linux
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the API server
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-✅ Backend ready at **http://localhost:8000** · Swagger docs at **http://localhost:8000/docs**
-
----
-
-### Step 3 — Start the Frontend (Terminal 2)
-
-```bash
-cd frontend
-
-# Copy frontend env
-copy .env.local.example .env.local
-
-# Install dependencies
-npm install
-
-# Start the dev server
-npm run dev
-```
-
-✅ Frontend ready at **http://localhost:3000**
-
----
-
-### Step 4 — Use the App
-
-```
-1. Open http://localhost:3000
-2. Click "Analyze My Report"
-3. Drag & drop a PDF or image of a blood/lab report
-4. Click "Analyze Report"
-5. Wait ~10–15 seconds → dashboard with your health score & AI insights
-```
-
-> 💡 **No Tesseract?** The app works fine without it — OCR.space handles scanned documents, and pdfplumber handles digital PDFs. Tesseract is only a local fallback.
-
----
-
-## 🌟 Overview
-
-**MediScan AI** is a full-stack web application built for a hackathon that transforms raw medical lab reports (PDFs or images) into clear, actionable health insights — powered by OCR and large language models.
-
-A user uploads their blood test or lab report, and within seconds receives:
-- A **health score** (0–100)
-- Color-coded **risk classification** for each biomarker (Normal / Moderate / Critical)
-- **Plain-English AI explanations** for every marker
-- **Personalized recommendations** generated by Groq LLM
-- A persistent **dashboard** they can revisit at any time
-
-No sign-up. No medical degree required. Just clarity.
-
----
-
-## 🎬 Live Demo Flow
-
-```
-1. Visit http://localhost:3000
-2. Click "Analyze My Report" → Upload page
-3. Drag & drop a PDF or image of a lab report
-4. Click "Analyze Report"
-5. ⏱️  ~10–15 seconds later → redirected to your personal Dashboard
-6. See your health score, biomarker table, AI summary, and recommendations
-```
-
----
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 📄 **Smart OCR Extraction** | pdfplumber (text PDFs) → OCR.space API (scanned) → Tesseract (local fallback) |
-| 🧠 **AI Interpretation** | Groq LLM generates plain-English explanations for every biomarker |
-| 📊 **Risk Dashboard** | Health score gauge, color-coded biomarker cards, risk badges |
-| 🛡️ **Rule-Based Validation** | Clinical reference ranges engine — grounds AI output in facts |
-| ⚡ **Results in Seconds** | Upload to full dashboard in under 15 seconds |
-| 🔬 **30+ Biomarkers** | Hemoglobin, LDL, Blood Sugar, TSH, Vitamin D, Creatinine, and more |
-| 💾 **Persistent Reports** | All analyses stored in SQLite — revisit any report via dashboard URL |
-| 📱 **Fully Responsive** | Mobile-first design, works on phones, tablets, and desktops |
-| 🔒 **No Login Required** | Zero friction — upload and analyze immediately |
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        USER BROWSER                             │
-│                    Next.js 16 Frontend                          │
-│         Landing → Upload → Dashboard (per report_id)            │
-└──────────────────────┬──────────────────────────────────────────┘
-                       │ HTTP (axios)
-                       ▼
-┌────────────────────────────────────────────────────────────────┐
-│                    FastAPI Backend :8000                       │
-│                                                                │
-│  POST /api/upload          POST /api/analyze/{id}              │
-│  GET  /api/report/{id}     GET  /docs (Swagger)                │
-│                                                                │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                  Analysis Pipeline                      │   │
-│  │                                                         │   │
-│  │  1. OCR Router ──────────────────────────────────────┐  │   │
-│  │     ├── pdfplumber (text-based PDFs)                 │  │   │
-│  │     ├── OCR.space API (scanned PDFs & images)        │  │   │
-│  │     └── Tesseract + OpenCV (local fallback)          │  │   │
-│  │                                                      │  │   │
-│  │  2. Medical Parser ──── regex + keyword matching     │  │   │
-│  │     └── Extracts: name, value, unit, ref range       │  │   │
-│  │                                                      │  │   │
-│  │  3. Risk Engine ───────────────────────────────────┐ │  │   │
-│  │     ├── Classifies: Normal / Moderate / Critical   │ │  │   │
-│  │     └── Calculates: Health Score (0–100)           │ │  │   │
-│  │                                                    │ │  │   │
-│  │  4. Groq LLM ──────────────────────────────────── ◄┘ │  │   │
-│  │     ├── Per-biomarker plain-English explanations     │  │   │
-│  │     ├── Overall health summary                       │  │   │
-│  │     └── Personalized recommendations                 │  │   │
-│  │                                                      │  │   │
-│  │  5. SQLite Persistence ──────────────────────────────┘  │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└────────────────────────────────────────────────────────────────┘
-                       │
-                       ▼
-              SQLite (medical.db)
-         reports + biomarkers tables
-```
-
----
-
-## 🛠️ Tech Stack
-
-### Backend
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **FastAPI** | 0.136 | REST API framework |
-| **Uvicorn** | 0.47 | ASGI server |
-| **pdfplumber** | 0.11.9 | Text extraction from digital PDFs |
-| **OCR.space API** | — | Cloud OCR for scanned documents |
-| **pytesseract** | 0.3.13 | Local OCR fallback |
-| **OpenCV** | 4.13 | Image preprocessing for OCR |
-| **Groq SDK** | 1.2.0 | LLM inference (llama3 models) |
-| **SQLite3** | built-in | Lightweight persistence |
-| **Pydantic** | 2.13 | Data validation & schemas |
-| **python-multipart** | 0.0.29 | File upload handling |
-| **python-dotenv** | 1.2.2 | Environment variable loading |
+##  Tech Stack
 
 ### Frontend
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **Next.js** | 16.2.6 (Turbopack) | React framework with SSR/CSR |
-| **TypeScript** | 5 | Type safety |
-| **framer-motion** | — | Animations & micro-interactions |
-| **Recharts** | — | Health score gauge & charts |
-| **axios** | — | HTTP client for API calls |
-| **Lucide React** | — | Icon library |
-| **Poppins + Inter** | Google Fonts | Typography |
-| **Vanilla CSS** | — | Custom design system with CSS tokens |
+- **Framework**: Next.js (App Router), React
+- **Styling & Animation**: CSS Modules, Framer Motion (for voice orbs and map interactions)
+- **Icons**: Lucide React
+- **HTTP/State**: Axios, React Hooks
 
----
+### Backend
+- **Framework**: FastAPI (Python)
+- **Database**: SQLite (SQLAlchemy / raw cursors for high-performance queries)
+- **Real-Time**: WebSockets (for Voice AI streaming)
+- **AI/Extraction**: LangChain, Groq API (Llama3/Mixtral)
+- **Architecture**: Modular routing (`auth.py`, `enterprise.py`, `recommendations.py`, `voice.py`)
 
-## 📁 Project Structure
-
-```
-Hackethon/
-├── .env                          # Root env file (shared API keys)
-├── README.md
-│
-├── backend/
-│   ├── main.py                   # FastAPI app entry point, CORS, lifespan
-│   ├── requirements.txt          # Python dependencies
-│   ├── medical.db                # SQLite database (auto-created)
-│   │
-│   ├── routes/
-│   │   ├── upload.py             # POST /api/upload
-│   │   └── analyze.py            # POST /api/analyze/{id}, GET /api/report/{id}
-│   │
-│   ├── services/
-│   │   ├── pipeline.py           # Main orchestrator: OCR→Parse→Classify→AI→DB
-│   │   ├── ocr_router.py         # Routes to PDF or image extractor
-│   │   ├── pdf_service.py        # pdfplumber + OCR.space PDF fallback
-│   │   ├── ocr_service.py        # OCR.space API + Tesseract local fallback
-│   │   ├── medical_parser.py     # Regex-based biomarker extraction
-│   │   ├── risk_engine.py        # Clinical range classification + health score
-│   │   └── ai_service.py        # Groq LLM: explanations, summary, recommendations
-│   │
-│   ├── db/
-│   │   ├── database.py           # SQLite connection factory
-│   │   ├── init_db.py            # Schema creation & migrations
-│   │   └── crud.py               # All DB read/write operations
-│   │
-│   ├── models/
-│   │   └── schemas.py            # Pydantic request/response models
-│   │
-│   └── uploads/                  # Uploaded files (gitignored)
-│
-└── frontend/
-    ├── .env.local                 # NEXT_PUBLIC_API_URL
-    ├── app/
-    │   ├── layout.tsx             # Root layout (fonts, metadata)
-    │   ├── globals.css            # Design system (CSS tokens, utilities)
-    │   ├── page.tsx               # Landing page
-    │   ├── upload/
-    │   │   └── page.tsx           # Upload page (drag-and-drop)
-    │   └── dashboard/
-    │       └── [reportId]/
-    │           └── page.tsx       # Results dashboard (dynamic route)
-    │
-    └── components/
-        └── Navbar.tsx             # Sticky responsive navbar
-```
-
----
-
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
-
-| Requirement | Notes |
-|-------------|-------|
-| **Python 3.11+** | Backend runtime |
-| **Node.js 18+** | Frontend runtime |
-| **Tesseract OCR** | [Download for Windows](https://github.com/UB-Mannheim/tesseract/wiki) — optional fallback |
-| **Groq API Key** | Free at [console.groq.com](https://console.groq.com/) |
-| **OCR.space API Key** | Free at [ocr.space](https://ocr.space/OCRAPI) — optional |
-
----
+- Python 3.10+
+- Node.js 18+
 
 ### Backend Setup
-
-```bash
-# 1. Navigate to backend
-cd backend
-
-# 2. Create and activate virtual environment
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-
-# macOS/Linux
-source venv/bin/activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Start the development server
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-The API will be available at:
-- **Base URL:** http://localhost:8000
-- **Swagger UI:** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
-
----
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Set up environment variables (copy `.env.example` to `.env` and add your API keys).
+5. Start the FastAPI server:
+   ```bash
+   uvicorn main:app --reload --port 8000
+   ```
 
 ### Frontend Setup
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up environment variables:
+   ```bash
+   echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+   echo "NEXT_PUBLIC_WS_URL=ws://localhost:8000" >> .env.local
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```bash
-# 1. Navigate to frontend
-cd frontend
-
-# 2. Install dependencies
-npm install
-
-# 3. Start the development server
-npm run dev
-```
-
-The frontend will be available at **http://localhost:3000**
-
----
-
-### Environment Variables
-
-Create a `.env` file in the **project root** (`Hackethon/.env`):
-
-```env
-# ── AI (Groq) ──────────────────────────────────────────────────────────────────
-GROQ_API_KEY=your_groq_api_key_here
-
-# ── OCR (OCR.space) ────────────────────────────────────────────────────────────
-# Get a free key at https://ocr.space/OCRAPI
-# Leave empty to use Tesseract-only fallback
-OCR_SPACE_API_KEY=your_ocrspace_key_here
-
-# ── CORS ───────────────────────────────────────────────────────────────────────
-FRONTEND_URL=http://localhost:3000
-```
-
-Create a `.env.local` file inside `frontend/`:
-
-```env
-# ── API URL ─────────────────────────────────────────────────────────────────────
-NEXT_PUBLIC_API_URL=http://localhost:8000
-```
-
-> 💡 **Groq Model Note:** Ensure you use a currently supported model in `ai_service.py`.  
-> As of 2026, use `llama-3.3-70b-versatile` or `llama3-70b-8192`. The `llama3-8b-8192` model has been decommissioned.
-
----
-
-## 📡 API Reference
-
-### `POST /api/upload`
-Upload a medical report file.
-
-**Request:** `multipart/form-data`
-| Field | Type | Description |
-|-------|------|-------------|
-| `file` | File | PDF, JPG, or PNG — max 20 MB |
-
-**Response:**
-```json
-{
-  "report_id": 5,
-  "document_url": "/uploads/abc123.pdf",
-  "message": "File uploaded successfully"
-}
-```
-
----
-
-### `POST /api/analyze/{report_id}`
-Run the full analysis pipeline on an uploaded report.
-
-**Response:** `AnalysisResult`
-```json
-{
-  "report_id": 5,
-  "health_score": 70,
-  "biomarkers": [
-    {
-      "marker_id": 12,
-      "marker_name": "Hemoglobin",
-      "extracted_value": 10.2,
-      "unit": "g/dL",
-      "risk_category": "Moderate",
-      "ai_explanation": "Your hemoglobin is slightly below the normal range..."
-    }
-  ],
-  "ai_summary": "Your report shows mild anemia with otherwise normal metabolic markers...",
-  "recommendations": [
-    "Consult a hematologist about your hemoglobin levels",
-    "Consider iron-rich foods like spinach and lentils"
-  ]
-}
-```
-
----
-
-### `GET /api/report/{report_id}`
-Retrieve a previously analyzed report from the database.
-
-**Response:** Same `AnalysisResult` schema as above.
-
-**Error (404):** Report not found or analysis not yet run.
-
----
-
-## 🔬 Analysis Pipeline
-
-The pipeline in `services/pipeline.py` runs 7 sequential steps:
-
-```
-Step 1: OCR Extraction
-    ├── pdfplumber  → text-based PDFs (fastest, most accurate)
-    ├── OCR.space   → scanned PDFs and images (cloud, handles tables well)
-    └── Tesseract   → local fallback with OpenCV preprocessing
-
-Step 2: Biomarker Parsing  (medical_parser.py)
-    └── Regex + keyword matching to extract:
-        name, numeric value, unit, reference range
-
-Step 3: Risk Classification  (risk_engine.py)
-    ├── Normal   → within reference range (or <10% deviation)
-    ├── Moderate → 10–25% outside reference range
-    └── Critical → >25% outside reference range
-
-Step 4: Health Score Calculation  (risk_engine.py)
-    └── Start at 100, deduct 15 per Critical, 7 per Moderate (min: 0)
-
-Step 5: AI Explanations  (ai_service.py → Groq)
-    └── Per-biomarker plain-English explanation
-
-Step 6: AI Summary & Recommendations  (ai_service.py → Groq)
-    ├── Overall health narrative
-    └── Prioritized, actionable recommendations
-
-Step 7: Persist to Database  (db/crud.py)
-    └── health_score, biomarkers, ai_summary, recommendations → SQLite
-```
-
----
-
-## 🗄️ Database Schema
-
-```sql
--- Users (placeholder, no auth currently)
-CREATE TABLE users (
-    user_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at TEXT    DEFAULT (datetime('now'))
-);
-
--- Medical Reports
-CREATE TABLE reports (
-    report_id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id              INTEGER REFERENCES users(user_id),
-    upload_timestamp     TEXT    DEFAULT (datetime('now')),
-    document_url         TEXT    NOT NULL,
-    overall_health_score INTEGER DEFAULT 100,
-    ai_summary           TEXT,
-    recommendations      TEXT    -- JSON array stored as string
-);
-
--- Biomarker Results
-CREATE TABLE biomarkers (
-    marker_id       INTEGER PRIMARY KEY AUTOINCREMENT,
-    report_id       INTEGER NOT NULL REFERENCES reports(report_id) ON DELETE CASCADE,
-    marker_name     TEXT    NOT NULL,
-    extracted_value REAL,
-    unit            TEXT,
-    risk_category   TEXT    CHECK(risk_category IN ('Normal','Moderate','Critical')) DEFAULT 'Normal',
-    ai_explanation  TEXT
-);
-```
-
----
-
-## 📊 Health Scoring
-
-The health score (0–100) is calculated deterministically from biomarker risk classifications:
-
-| Risk Level | Deduction | Trigger Condition |
-|------------|-----------|-------------------|
-| **Critical** | −15 points | Value >25% outside reference range |
-| **Moderate** | −7 points | Value 10–25% outside reference range |
-| **Normal** | −0 points | Value within range (or <10% deviation) |
-
-**Example:**
-```
-13 biomarkers found:
-  → 3 Critical  = 3 × 15 = 45 points deducted
-  → 2 Moderate  = 2 ×  7 = 14 points deducted
-  → 8 Normal    = 0 deducted
-
-Health Score = max(0, 100 - 59) = 41
-```
-
----
-
-## ⚠️ Known Issues & Limitations
-
-| Issue | Impact | Fix / Workaround |
-|-------|--------|-----------------|
-| `llama3-8b-8192` model decommissioned | AI explanations fail silently | Update model in `ai_service.py` to `llama-3.3-70b-versatile` |
-| No user authentication | All reports are public by `report_id` | Add JWT auth for production |
-| SQLite not suitable for production | Single-writer lock, no concurrent writes | Migrate to PostgreSQL for deployment |
-| OCR.space free tier limits | 500 API calls/month | Use Tesseract fallback or upgrade plan |
-| Report history not shown in UI | Users must know their `report_id` | Add a History page |
-
----
-
-## 🗺️ Roadmap
-
-- [ ] **Fix Groq model** → update to `llama-3.3-70b-versatile`
-- [ ] **Report History page** — list all past uploads with timestamps
-- [ ] **Export to PDF** — print-friendly dashboard report
-- [ ] **Authentication** — user accounts via NextAuth / Supabase
-- [ ] **Trend Analysis** — compare reports over time (same user)
-- [ ] **Deploy** — Vercel (frontend) + Railway/Render (backend)
-- [ ] **PostgreSQL migration** — replace SQLite for production
-- [ ] **More biomarkers** — expand the reference range database
-
----
-
-## 👥 Team
-
-Built for **HackXcelarate 2K26** by the Optimus Devs.
-
----
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-
-Made with ❤️ and ☕ for the  **HackXcelarate 2K26**
-
-**[🚀 Upload Your Report](http://localhost:3000/upload)** · **[📖 API Docs](http://localhost:8000/docs)**
-
-</div>
+##  Navigation & Demos
+- **Dashboard**: View analyzed reports and health scores.
+- **Find Doctors**: Click on the "Find Doctors" pin on any analyzed report to see the Geospatial Recommendation system in action.
+- **Sofia Voice AI**: Click "Sofia Voice AI" in the navbar to interact with the real-time, interruptible conversational agent.
+- **Enterprise Operations**: Click "Sofia Enterprise" in the navbar to access the B2B Clinic Dashboard, simulate safety checks, and run bulk billing pipelines.

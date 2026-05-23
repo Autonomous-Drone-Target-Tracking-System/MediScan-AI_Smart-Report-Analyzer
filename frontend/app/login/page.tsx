@@ -19,9 +19,17 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const [expiredNotice, setExpiredNotice] = useState(false);
+
   // Clear existing session on loading login page
   useEffect(() => {
     clearSession();
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("expired") === "true") {
+        setExpiredNotice(true);
+      }
+    }
   }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -241,6 +249,29 @@ export default function LoginPage() {
 
         {/* Feedback alerts */}
         <AnimatePresence mode="wait">
+          {expiredNotice && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              style={{
+                background: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.2)",
+                borderRadius: 10,
+                padding: "10px 14px",
+                fontSize: 13,
+                color: "#FDE68A",
+                marginBottom: 16,
+                display: "flex",
+                alignItems: "center",
+                gap: 8
+              }}
+            >
+              <AlertTriangle size={16} style={{ flexShrink: 0, color: "#F59E0B" }} />
+              <span>Your clinical session has expired. Please re-authenticate.</span>
+            </motion.div>
+          )}
+
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}

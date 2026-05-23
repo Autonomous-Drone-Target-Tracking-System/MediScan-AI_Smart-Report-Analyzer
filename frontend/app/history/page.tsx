@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import {
   History, Clock, FileText, ChevronRight, Loader2, AlertCircle,
-  Activity, ArrowRight, Upload, RefreshCw
+  Activity, ArrowRight, Upload, RefreshCw, MapPin
 } from "lucide-react";
 import axios from "axios";
 import Navbar from "@/components/Navbar";
@@ -430,14 +430,24 @@ export default function HistoryPage() {
 
                   {/* Action */}
                   {isAnalyzed ? (
-                    <Link
-                      href={r.is_radiology ? `/radiology/${r.report_id}` : r.is_cardiac ? `/cardiac/${r.report_id}` : r.is_dicom ? `/dicom/${r.report_id}` : `/dashboard/${r.report_id}`}
-                      className="btn-primary"
-                      style={{ padding: "10px 18px", fontSize: "13px", flexShrink: 0 }}
-                    >
-                      View Dashboard
-                      <ChevronRight size={14} />
-                    </Link>
+                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                      <Link
+                        href={`/recommendations/${r.report_id}`}
+                        className="btn-secondary"
+                        style={{ padding: "10px 18px", fontSize: "13px" }}
+                      >
+                        <MapPin size={14} />
+                        Find Doctors
+                      </Link>
+                      <Link
+                        href={r.is_radiology ? `/radiology/${r.report_id}` : r.is_cardiac ? `/cardiac/${r.report_id}` : r.is_dicom ? `/dicom/${r.report_id}` : `/dashboard/${r.report_id}`}
+                        className="btn-primary"
+                        style={{ padding: "10px 18px", fontSize: "13px" }}
+                      >
+                        View Dashboard
+                        <ChevronRight size={14} />
+                      </Link>
+                    </div>
                   ) : (
                     <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                       <Link

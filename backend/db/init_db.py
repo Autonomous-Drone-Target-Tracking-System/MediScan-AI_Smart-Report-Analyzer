@@ -82,6 +82,42 @@ def init_db():
             details     TEXT
         );
 
+        CREATE TABLE IF NOT EXISTS enterprise_centers (
+            center_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+            name        TEXT NOT NULL,
+            address     TEXT NOT NULL,
+            is_active   INTEGER DEFAULT 1
+        );
+
+        CREATE TABLE IF NOT EXISTS patient_profiles (
+            profile_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id             INTEGER UNIQUE REFERENCES users(user_id) ON DELETE CASCADE,
+            allergies           TEXT,
+            metal_implants      INTEGER DEFAULT 0,
+            contraindications   TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS enterprise_appointments (
+            appointment_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id             INTEGER REFERENCES users(user_id),
+            center_id           INTEGER REFERENCES enterprise_centers(center_id),
+            scan_modality       TEXT,
+            appointment_time    TEXT,
+            status              TEXT CHECK(status IN ('BOOKED','COMPLETED','CANCELLED','NO_SHOW')) DEFAULT 'BOOKED',
+            prep_guidelines     TEXT,
+            safety_cleared      INTEGER DEFAULT 0,
+            ris_reservation_id  TEXT,
+            is_billed           INTEGER DEFAULT 0
+        );
+
+        CREATE TABLE IF NOT EXISTS referral_documents (
+            referral_id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            appointment_id      INTEGER REFERENCES enterprise_appointments(appointment_id) ON DELETE CASCADE,
+            user_id             INTEGER REFERENCES users(user_id),
+            document_url        TEXT NOT NULL,
+            upload_timestamp    TEXT DEFAULT (datetime('now'))
+        );
+
         CREATE INDEX IF NOT EXISTS idx_reports_user_id ON reports(user_id);
         CREATE INDEX IF NOT EXISTS idx_biomarkers_report_id ON biomarkers(report_id);
         CREATE INDEX IF NOT EXISTS idx_biomarkers_marker_name ON biomarkers(marker_name);

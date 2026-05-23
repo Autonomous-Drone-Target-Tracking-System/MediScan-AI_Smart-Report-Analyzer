@@ -18,6 +18,9 @@ from routes.auth import router as auth_router
 from routes.radiology import router as radiology_router
 from routes.cardiac import router as cardiac_router
 from routes.dicom import router as dicom_router
+from routes.recommendations import router as recommendations_router
+from routes.voice import router as voice_router
+from routes.enterprise import router as enterprise_router
 
 
 @asynccontextmanager
@@ -63,6 +66,9 @@ app.include_router(auth_router,      prefix="/api", tags=["Auth"])
 app.include_router(radiology_router, prefix="/api", tags=["Radiology"])
 app.include_router(cardiac_router,   prefix="/api", tags=["Cardiac"])
 app.include_router(dicom_router,     prefix="/api", tags=["DICOM"])
+app.include_router(recommendations_router, prefix="/api", tags=["Recommendations"])
+app.include_router(voice_router, prefix="/api", tags=["Voice AI"])
+app.include_router(enterprise_router, prefix="/api/enterprise", tags=["Sofia Enterprise"])
 
 
 @app.get("/")

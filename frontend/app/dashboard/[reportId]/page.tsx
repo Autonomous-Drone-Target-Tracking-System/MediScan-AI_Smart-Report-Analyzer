@@ -225,7 +225,7 @@ function HealthGauge({ score }: { score: number }) {
           </div>
         </div>
       </div>
-      <div style={{ fontSize: "13px", color: "var(--color-text-muted)", marginTop: 8 }}>
+      <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.8)", marginTop: 8 }}>
         out of 100
       </div>
     </div>
